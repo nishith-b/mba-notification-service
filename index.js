@@ -1,28 +1,40 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const env = require("dotenv");
+const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
-//const sendMail = require("./services/email-service");
-const cron = require("./crons/cron");
-const app = express();
-
+const { mailerCron } = require("./crons/cron");
 const TicketRoutes = require("./routes/ticket-route");
 
-env.config();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+dotenv.config();
+
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 TicketRoutes(app);
 
-app.listen(process.env.PORT, async () => {
-  console.log("Notification server started");
-  //sendMail(process.env.EMAIL, process.env.EMAIL_PASS);
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Internal Server Error" });
+});
+
+const startServer = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
-    console.log("Successfully connected to mongoose..!");
+    console.log("✅ Successfully connected to MongoDB");
+
+    app.listen(process.env.PORT, () => {
+      console.log(`🚀 Notification server started on port ${process.env.PORT}`);
+    });
+
+    mailerCron();
+    console.log("⏰ Mailer cron started");
+
   } catch (error) {
-    console.log(error);
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
   }
-  cron.mailerCron();
-});
+};
+
+startServer();
