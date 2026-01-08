@@ -20,6 +20,37 @@ const create = async (data) => {
   }
 };
 
+const getAll = async () => {
+  try {
+    const response = await Ticket.find();
+    if (!response) {
+      throw {
+        err: "No Tickets Found..!",
+        code: StatusCodes.NOT_FOUND,
+      };
+    }
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getById = async (id) => {
+  try {
+    const response = await Ticket.findById(id);
+    if (!response) {
+      throw {
+        err: "No Tickets Found for given id..!",
+        code: StatusCodes.NOT_FOUND,
+      };
+    }
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 module.exports = {
   create,
+  getAll,
+  getById,
 };
