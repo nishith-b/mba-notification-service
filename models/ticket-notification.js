@@ -10,7 +10,7 @@ const ticketNotificationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    recepientEmail: {
+    recepientEmails: {
       type: [String],
       required: true,
     },
@@ -21,6 +21,7 @@ const ticketNotificationSchema = new mongoose.Schema(
         values: ["SUCCESS", "FAILED", "PENDING"],
         message: "Invalid Ticket Status",
       },
+      default: "PENDING",
     },
   },
   { timestamps: true }

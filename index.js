@@ -6,9 +6,13 @@ const mongoose = require("mongoose");
 const sendMail = require("./services/email-service");
 const app = express();
 
+const TicketRoutes = require("./routes/ticket-route");
+
 env.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+TicketRoutes(app);
 
 app.listen(process.env.PORT, async () => {
   console.log("Notification server started");
