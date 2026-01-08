@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendMail = (userId, password, mailData) => {
+const mailer = (userId, password, mailData) => {
   const transport = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -8,13 +8,6 @@ const sendMail = (userId, password, mailData) => {
       pass: password,
     },
   });
-
-  transport.sendMail({
-    from: mailData.from,
-    to: mailData.to,
-    subject: mailData.subject,
-    text: mailData.text,
-  });
 };
 
-module.exports = sendMail;
+module.exports = mailer;
