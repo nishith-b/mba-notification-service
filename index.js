@@ -21,7 +21,22 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL);
+    // Enable debug logs only in development
+    if (process.env.NODE_ENV === "development") {
+      mongoose.set("debug", true);
+      await mongoose.connect(process.env.DB_URL);
+    }
+
+    // Sync indexes safely (dev / test only)
+    if (process.env.NODE_ENV !== "production") {
+      await Theatre.syncIndexes();
+    }
+
+    // Connect to Production DB
+    if (process.env.NODE_ENV === "production") {
+      await mongoose.connect(process.env.PROD_DB_URL);
+    }
+
     console.log("✅ Successfully connected to MongoDB");
 
     app.listen(process.env.PORT, () => {
@@ -30,7 +45,6 @@ const startServer = async () => {
 
     mailerCron();
     console.log("⏰ Mailer cron started");
-
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);
